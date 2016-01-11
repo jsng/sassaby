@@ -9,9 +9,31 @@ var parsers = require('./parsers');
 function setVariables(varz) {
   var sassVariables = '';
   for (var variableName in varz) {
-    sassVariables = sassVariables + '$' + variableName + ':' + varz[variableName] + ';';
+    sassVariables = sassVariables + '$' + variableName + ':' + serializeVar(varz[variableName]) + ';';
   }
   return sassVariables;
+}
+
+function serializeVar(variable) {
+  if (typeof(variable) === "string") {
+    return variable;
+  }
+
+  if (variable instanceof Array) {
+    return "(" + variable.toString() + ")";
+  }
+
+  if (variable instanceof Object && !(variable instanceof Array)) {
+    return (
+      JSON.stringify(variable)
+      .replace(/[{]/g, "(")
+      .replace(/[}]/g, ")")
+      .replace(/[[]/g, "(")
+      .replace(/[\]]/g, ")")
+    ); 
+  }
+
+  return variable;
 }
 
 function setDependencies(dependencies) {
@@ -65,6 +87,7 @@ Sassaby.prototype = {
 if (process.env.NODE_ENV === 'test') {
   Sassaby.setVariables = setVariables;
   Sassaby.setDependencies = setDependencies;
+  Sassaby.serializeVar = serializeVar;
 }
 
 module.exports = Sassaby;

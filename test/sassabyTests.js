@@ -46,6 +46,28 @@ describe("Sassaby", function() {
     });
   });
 
+  describe("serializeVar", function() {
+    it("should return a string of the SASS string if given variable type is string", function() {
+      var variable = "rgb(250, 100, 98)";
+      assert.equal(Sassaby.serializeVar(variable), "rgb(250, 100, 98)");
+    });
+
+    it("should return a number of the SASS number if given variable type is string", function() {
+      var variable = 1;
+      assert.equal(Sassaby.serializeVar(variable), 1);
+    });
+
+    it("should return a string of SASS list if given variable type is list", function() {
+      var variable = [1, 2, 3];
+      assert.equal(Sassaby.serializeVar(variable), "(1,2,3)");
+    });
+
+    it("should return a string of SASS map if given variable type is list", function() {
+      var variable = {foo: "bar", foos: { bars: [1,2,3] }};
+      assert.equal(Sassaby.serializeVar(variable), '("foo":"bar","foos":("bars":(1,2,3)))');
+    });
+  });
+
   describe("setDependencies", function() {
     it("should return a string of the SASS import if given one dependency", function() {
       var dependencies = [
